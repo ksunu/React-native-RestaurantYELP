@@ -1,29 +1,33 @@
-import React, {useState} from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
-import businessApi from "../api/business.api";
-import api from "../api/api";
+import useResultsHook from "../hooks/useResults-hook";
+import ResultsList from "../components/ResultsList";
 
 const SearchScreen = () => {
   const [term, setTerm] = useState('');
-  const [results, setResults] = useState([]);
+  const [searchBusinessApi, results, errorMessage] = useResultsHook();
 
-  const searchBusinessApi = async (term) => {
-    const response = await businessApi.getBusinessSearch(term);
-    setResults(response)
-
+  const filterResultsByPrice = price => {
+    return results.filter(result => {
+      return result.price === price
+    })
   };
 
   return (
-    <View>
+    <>
       <SearchBar
         term={term}
         onTermChange={()=>setTerm()}
         onTermSubmit={()=>searchBusinessApi()}
       />
-      <Text>Search Screen</Text>
-      <Text>We have found {results.length} results</Text>
-    </View>
+      {errorMessage ? <Text>{errorMessage}</Text> : null}
+      <ScrollView>
+        <ResultsList results={filterResultsByPrice('$')} title='Cost Effective' />
+        <ResultsList results={filterResultsByPrice('$$')} title='Bit Pricier' />
+        <ResultsList results={filterResultsByPrice('$$$')} title='Big Spender' />
+      </ScrollView>
+    </>
   )
 };
 

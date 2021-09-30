@@ -5,10 +5,15 @@ const getBusinessSearch = async (term) => {
     params: {
       limit: 50,
       term,
-      location: 'san jose'
+      location: 'los angeles'
     }
   })
   return response.data.businesses
 };
 
-export default { getBusinessSearch };
+const getBusinessById = async (id) => {
+  const response = await api.get(`/businesses/${id}`)
+  return response.data
+}
+
+export default { getBusinessSearch, getBusinessById };
